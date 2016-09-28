@@ -18,35 +18,38 @@ import org.quartz.SchedulerFactory;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 
+import EarthQuake.VO.EarthQuakeVO;
+
 /**
  * @author 3574
  *
  */
 public class ScheduleController {
+	public static EarthQuakeVO currentEarthQuakep = new EarthQuakeVO();
 	public ScheduleController() {
 		try {
 			ArrayList state = new ArrayList<String>();
-			//ÁÖ±âÀûÀ¸·Î ½ÇÇà½ÃÅ¬ job Å¬·¡½º µî·Ï
-			//job Å¬·¡½º´Â »ı¼ºÀÚ¿¡ ÀÎÀÚ°¡ µé¾î°¡¸é ¾ÈµÊ, inner class·Î »ı¼ºÇÏ¸é ¾ÈµÊ.
-			//job Å¬·¡½º¿¡ µ¥ÀÌÅÍ Àü¼Û
+			//ì£¼ê¸°ì ìœ¼ë¡œ ì‹¤í–‰ì‹œí´ job í´ë˜ìŠ¤ ë“±ë¡
+			//job í´ë˜ìŠ¤ëŠ” ìƒì„±ìì— ì¸ìê°€ ë“¤ì–´ê°€ë©´ ì•ˆë¨, inner classë¡œ ìƒì„±í•˜ë©´ ì•ˆë¨.
+			//job í´ë˜ìŠ¤ì— ë°ì´í„° ì „ì†¡
 			JobDetail job = JobBuilder.newJob(ScheduleBotJob.class)
-									  .withIdentity("testJob")
-									  .usingJobData("jobSays", "ÃÖ±Ù ÁöÁø ¹ß»ı Á¤º¸")
+//									  .withIdentity("testJob")
+									  .usingJobData("jobSays", "ìµœê·¼ ì§€ì§„ ë°œìƒ ì •ë³´")
 									  .usingJobData("myFloatValue", "product by MinYoung Lee").build();
 			job.getJobDataMap().put("state", state);
 
 
-			// 10ÃÊ¸¶´Ù °è¼Ó µ¹±â java Timer¿Í ºñ½Á
+			// 10ì´ˆë§ˆë‹¤ ê³„ì† ëŒê¸° java Timerì™€ ë¹„ìŠ·
 			/*
 			 * Trigger trigger = TriggerBuilder.newTrigger()
 			 * .withSchedule(SimpleScheduleBuilder.simpleSchedule()
 			 * .withIntervalInSeconds(10) .repeatForever()) .build();
 			 */
 
-			// CronTrigger ¸Å 10ÃÊ¸¶´Ù(10,20,30 ...) ÀÛ¾÷ ½ÇÇà
+			// CronTrigger ë§¤ 10ì´ˆë§ˆë‹¤(10,20,30 ...) ì‘ì—… ì‹¤í–‰
 
 			CronTrigger cronTrigger = TriggerBuilder.newTrigger()
-													.withIdentity("crontrigger", "crontriggergroup1")
+													.withIdentity("earthQuakeScheduler", "earthQuakeInfo")
 //													.withSchedule(CronScheduleBuilder.cronSchedule("1 * * * * ?"))
 													.withSchedule(CronScheduleBuilder.cronSchedule("0/10 * * * * ?"))
 													.build();
@@ -55,11 +58,11 @@ public class ScheduleController {
 			SchedulerFactory schFactory = new StdSchedulerFactory();
 			Scheduler sch = schFactory.getScheduler();
 
-			//½ºÄÉÁÙ·¯ ½ÃÀÛ
+			//ìŠ¤ì¼€ì¤„ëŸ¬ ì‹œì‘
 			sch.start();
 			sch.scheduleJob(job, cronTrigger);
 
-			// ½ºÄÉÁÙ·¯ Á¤Áö sch.shutdown();
+			// ìŠ¤ì¼€ì¤„ëŸ¬ ì •ì§€ sch.shutdown();
 
 		} catch (SchedulerException e) {
 			e.printStackTrace();

@@ -14,18 +14,18 @@ public enum EarthQuakeEnum {
 	URL ("URL","http://necis.kma.go.kr/necis-dbf/user/earthquake/annual_earthquake.do"),
 	LASTEARTHQUAKE_ELEMENTS ("LASTEARTHQUAKE_ELEMENTS","div.yearly_earthquake tbody tr"),
 	GOOGLE_MAP ("GOOGLE_MAP","http://maps.google.com/maps?q="),
-	//2.9¹Ì¸¸
-	LEVEL_1 ("LEVEL_1","±Ø¼Ò¼öÀÇ »ç¶÷À» Á¦¿ÜÇÏ°í´Â ÀüÇô ´À³¥ ¼ö ¾ø´Â ¼öÁØ"),
-	//3~4 ¼¼±â
-	LEVEL_2 ("LEVEL_2","¼Ò¼öÀÇ »ç¶÷µé, Æ¯È÷ °Ç¹°ÀÇ À­ Ãþ¿¡ ÀÖ´Â ¼Ò¼öÀÇ »ç¶÷µé¸¸ ´À³¥ ¼ö ÀÖ´Â ¼öÁØÀ¸·Î ¼¶¼¼ÇÏ°Ô ¸Å´Þ¸° ¹°Ã¼ Áøµ¿"),
-	//4~5 ¼¼±â
-	LEVEL_3 ("LEVEL_3","°ÅÀÇ ¸ðµç »ç¶÷µéÀÌ ´À³¢´Â ¼öÁØ\n¹ã¿¡ ÀáÀ» ±ú¸ç ±×¸©, Ã¢¹®, ¹® µîÀÌ ¼Ò¶õÇÏ¸ç º®ÀÌ °¥¶óÁö´Â ¼Ò¸®¸¦ ³¿. ´ëÇü Æ®·°ÀÌ º®À» ¹Þ´Â ´À³¦À» ÁÖ°í Á¤ÁöÇÏ°í ÀÖ´Â ÀÚµ¿Â÷ÀÇ ¿òÁ÷ÀÓÀÌ ¶Ñ·ÇÇÔ"),
-	//5~6 ¼¼±â
-	LEVEL_4 ("LEVEL_4","¸ðµç »ç¶÷µéÀÌ ¹ÛÀ¸·Î ¶Ù¾î ³ª¿À´Â ¼öÁØ \nÀß ¼³°èµÈ °Ç¹°¿¡ ÇÇÇØ°¡ ¾øÀ» ¼ö ÀÖÀ¸³ª º¸Åë °ÇÃà¹°¿¡´Â ¾à°£ÀÇ ÇÇÇØ°¡ ÀÖÀ¸¸ç, ºÎ½ÇÇÑ °ÇÃà¹°¿¡´Â Å« ÇÇÇØ°¡ ¹ß»ýÇÏ°í ¿îÀüÀÚ°¡ ´À³¥ ¼ö ÀÖÀ½."),
-	//6~7 ¼¼±â
-	LEVEL_5 ("LEVEL_5","Ã¢º®ÀÌ ¹«³ÊÁö°í ±¼¶Ò, ±âµÕ, º®µéÀÌ ¹«³ÊÁü. ¹«°Å¿î °¡±¸°¡ µÚÁý¾î Áö¸ç ¸ð·¡¿Í ÁøÈëÀÌ ¼Ú¾Æ³². ¿ì¹° ¼ö¸éÀÌ º¯ÇÏ°í ¿îÀüÀÚ°¡ ¹æÇØ¸¦ ¹ÞÀ½."),
-	//7 ¼¼±â ÀÌ»ó
-	LEVEL_6 ("LEVEL_6","±³·®ÀÌ ºÎ¼­Áö°í ¶¥¿¡ ³ÐÀº ±Õ¿­ÀÌ ¹ß»ýµÇ¸ç, ÁöÇÏ ÆÄÀÌÇÁ°¡ ¿ÏÀüÈ÷ ÆÄ±«µÊ. ¿¬¾àÇÑ ¶¥ÀÌ Ç« ²¨Áö°í ÁöÃþÀÌ ¾î±ß³ª¸ç, ±âÂ÷¼±·Î°¡ ½ÉÇÏ°Ô ÈÖ¾îÁü.\nÁöÇ¥¸é¿¡ ÆÄµ¿ÀÌ º¸ÀÌ°í ½Ã¾ß¿Í ¼öÆò¸éÀÌ µÚÆ²¸®°í ¹°Ã¼°¡ ÇÏ´Ã·Î ´øÁ®Áü."),
+	//2.9ë¯¸ë§Œ
+	LEVEL_1 ("LEVEL_1","ê·¹ì†Œìˆ˜ì˜ ì‚¬ëžŒì„ ì œì™¸í•˜ê³ ëŠ” ì „í˜€ ëŠë‚„ ìˆ˜ ì—†ëŠ” ìˆ˜ì¤€"),
+	//3~4 ì„¸ê¸°
+	LEVEL_2 ("LEVEL_2","ì†Œìˆ˜ì˜ ì‚¬ëžŒë“¤, íŠ¹ížˆ ê±´ë¬¼ì˜ ìœ— ì¸µì— ìžˆëŠ” ì†Œìˆ˜ì˜ ì‚¬ëžŒë“¤ë§Œ ëŠë‚„ ìˆ˜ ìžˆëŠ” ìˆ˜ì¤€ìœ¼ë¡œ ì„¬ì„¸í•˜ê²Œ ë§¤ë‹¬ë¦° ë¬¼ì²´ ì§„ë™"),
+	//4~5 ì„¸ê¸°
+	LEVEL_3 ("LEVEL_3","ê±°ì˜ ëª¨ë“  ì‚¬ëžŒë“¤ì´ ëŠë¼ëŠ” ìˆ˜ì¤€\në°¤ì— ìž ì„ ê¹¨ë©° ê·¸ë¦‡, ì°½ë¬¸, ë¬¸ ë“±ì´ ì†Œëž€í•˜ë©° ë²½ì´ ê°ˆë¼ì§€ëŠ” ì†Œë¦¬ë¥¼ ëƒ„. ëŒ€í˜• íŠ¸ëŸ­ì´ ë²½ì„ ë°›ëŠ” ëŠë‚Œì„ ì£¼ê³  ì •ì§€í•˜ê³  ìžˆëŠ” ìžë™ì°¨ì˜ ì›€ì§ìž„ì´ ëšœë ·í•¨"),
+	//5~6 ì„¸ê¸°
+	LEVEL_4 ("LEVEL_4","ëª¨ë“  ì‚¬ëžŒë“¤ì´ ë°–ìœ¼ë¡œ ë›°ì–´ ë‚˜ì˜¤ëŠ” ìˆ˜ì¤€ \nìž˜ ì„¤ê³„ëœ ê±´ë¬¼ì— í”¼í•´ê°€ ì—†ì„ ìˆ˜ ìžˆìœ¼ë‚˜ ë³´í†µ ê±´ì¶•ë¬¼ì—ëŠ” ì•½ê°„ì˜ í”¼í•´ê°€ ìžˆìœ¼ë©°, ë¶€ì‹¤í•œ ê±´ì¶•ë¬¼ì—ëŠ” í° í”¼í•´ê°€ ë°œìƒí•˜ê³  ìš´ì „ìžê°€ ëŠë‚„ ìˆ˜ ìžˆìŒ."),
+	//6~7 ì„¸ê¸°
+	LEVEL_5 ("LEVEL_5","ì°½ë²½ì´ ë¬´ë„ˆì§€ê³  êµ´ëš, ê¸°ë‘¥, ë²½ë“¤ì´ ë¬´ë„ˆì§. ë¬´ê±°ìš´ ê°€êµ¬ê°€ ë’¤ì§‘ì–´ ì§€ë©° ëª¨ëž˜ì™€ ì§„í™ì´ ì†Ÿì•„ë‚¨. ìš°ë¬¼ ìˆ˜ë©´ì´ ë³€í•˜ê³  ìš´ì „ìžê°€ ë°©í•´ë¥¼ ë°›ìŒ."),
+	//7 ì„¸ê¸° ì´ìƒ
+	LEVEL_6 ("LEVEL_6","êµëŸ‰ì´ ë¶€ì„œì§€ê³  ë•…ì— ë„“ì€ ê· ì—´ì´ ë°œìƒë˜ë©°, ì§€í•˜ íŒŒì´í”„ê°€ ì™„ì „ížˆ íŒŒê´´ë¨. ì—°ì•½í•œ ë•…ì´ í‘¹ êº¼ì§€ê³  ì§€ì¸µì´ ì–´ê¸‹ë‚˜ë©°, ê¸°ì°¨ì„ ë¡œê°€ ì‹¬í•˜ê²Œ íœ˜ì–´ì§.\nì§€í‘œë©´ì— íŒŒë™ì´ ë³´ì´ê³  ì‹œì•¼ì™€ ìˆ˜í‰ë©´ì´ ë’¤í‹€ë¦¬ê³  ë¬¼ì²´ê°€ í•˜ëŠ˜ë¡œ ë˜ì ¸ì§."),
 	
 	LASTCOUNT_ELEMENTS ("LASTCOUNT_ELEMENTS","div.totalCount b");
  

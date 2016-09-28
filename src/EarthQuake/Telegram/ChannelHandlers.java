@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
@@ -28,9 +30,9 @@ import EarthQuake.GPS.Geocoding;
  * @date 24 of June of 2015
  */
 public class ChannelHandlers extends TelegramLongPollingBot {
-	public static HashMap<Message, EarthQuakeVO> earthQuakeMap = new HashMap<Message, EarthQuakeVO>();
     private static final String LOGTAG = "CHANNELHANDLERS";
-
+    //ë¡œê·¸ì„ ì–¸
+  	static final Logger log = LoggerFactory.getLogger("EARTH_QUAKE_LOGGER");
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -63,92 +65,98 @@ public class ChannelHandlers extends TelegramLongPollingBot {
     public String getBotUsername() {
         return BotConfig.CHANNEL_USER;
     }
-    
-    // ½ºÄÉÁì·¯ ¸Ş½ÃÁö Àü´Ş
-    public void schedulerMessageSend(Message message, String text){
+    // ìŠ¤ì¼€ì¥´ëŸ¬ ë©”ì‹œì§€ ì „ë‹¬
+    public void schedulerMessageSend(EarthQuakeVO earthQuakeVO, String channelID){
     	SendMessage sendMessage = new SendMessage();
-    	sendMessage.setChatId(message.getChatId().toString());
     	
-    	String resultMessage = text;
-    	sendMessage.setText(resultMessage);
+    	sendMessage = messageForm(earthQuakeVO, "");
+    	// @jijin2 ì§€ì§„ì´ ë§í•œë‹¤ ì±„ë„ë¡œ ê³ ì •
+    	sendMessage.setChatId(channelID);
     	try {
             sendMessage(sendMessage);
         } catch (TelegramApiException e) {
+        	log.error("MESSAGE SEND ERROR : ChannelHandlers.schedulerMessageSend");
         }
     }
+    
 
-    // Áú¹®¿¡ ´äº¯ÇÏ±â
+    // ì§ˆë¬¸ì— ë‹µë³€í•˜ê¸°
     private void handleIncomingMessage(Message message) throws InvalidObjectException {
     	String messageText = message.getText();
         if(messageText.startsWith("/")){
         	messageText = messageText.substring(1, messageText.length());
         }
-    	if(messageText.equals("´ÚÃÄ") || messageText.equals("¾Æ³ö") || messageText.equals("Á×´Â´Ù") || messageText.equals("")  ){
-    		funnyConversation(message, "¶È¹Ù·Î ¸»ÇØ! ½Ãºñ°ÉÁö ¸»°í.. ¹Ù»Ú´Ù");
-    	}else if(messageText.equals("¹¹") || messageText.equals(" ")){
-    		funnyConversation(message, "¹¹! ÀÌ´®ÀÌ!");
-    	}else if(messageText.equals("¾ß") || messageText.equals("¸ğ¾ß")){
-    		funnyConversation(message, "³»°¡ ´Ï º¿ÀÎÁÙ ¾Æ³Ä? ¤»¤» ");
-    	}else if(messageText.equals("½ÈÀºµ¥") || messageText.equals("½È¾î")){
-    		funnyConversation(message, "³ª°¡!");
-    	}else if(messageText.equals("¾Ë·ÁÁà")){
+        if(messageText.equals("ë‹¥ì³") || messageText.equals("ì•„ë†”") || messageText.equals("ì£½ëŠ”ë‹¤") || messageText.equals("")  ){
+    		funnyConversation(message, "ë˜‘ë°”ë¡œ ë§í•´! ì‹œë¹„ê±¸ì§€ ë§ê³ .. ë°”ì˜ë‹¤");
+    	}else if(messageText.equals("ë­") || messageText.equals(" ")){
+    		funnyConversation(message, "ë­! ì´ëˆ”ì´!");
+    	}else if(messageText.equals("ì•¼") || messageText.equals("ëª¨ì•¼")){
+    		funnyConversation(message, "ë‚´ê°€ ë‹ˆ ë´‡ì¸ì¤„ ì•„ëƒ? ã…‹ã…‹ ");
+    	}else if(messageText.equals("ì‹«ì€ë°") || messageText.equals("ì‹«ì–´")){
+    		funnyConversation(message, "ë‚˜ê°€!");
+    	}else if(messageText.equals("ê·¸ë§Œ") || messageText.equals("stop")){
+    		funnyConversation(message, "ì„ì˜ ì‚¬ìš©ìê°€ stop ì‹œí‚¬ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+    	}else if(messageText.equals("ì•Œë ¤ì¤˜") || messageText.equals("start")){
     		EarthQuakeVO earthQuakeVO = new EarthQuakeVO();
     		EarthQuakeInfoCrawer earthQuakeInfoCrawer = new EarthQuakeInfoCrawer();
     		try {
     			earthQuakeVO = earthQuakeInfoCrawer.getInfoEarthQuake();
-    			SendMessage sendMessage = messageForm(message, earthQuakeVO, "");
+    			SendMessage sendMessage = messageForm(earthQuakeVO, "");
+    			sendMessage.setChatId(message.getChatId().toString());
     			sendMessage(sendMessage);
-    			earthQuakeMap.put(message, earthQuakeVO);
     		} catch (IOException e) {
     			// TODO Auto-generated catch block
     			e.printStackTrace();
+    			log.error("REPLY ERROR : ChannelHandlers.handelIncomingMessage");
     		} catch (TelegramApiException e) {
     			// TODO Auto-generated catch block
     			e.printStackTrace();
+    			log.error("REPLY ERROR : ChannelHandlers.handelIncomingMessage");
     		}
     	}else{
-    		funnyConversation(message, "Àå³­ ±×¸¸Ä¡°í...");
+    		funnyConversation(message, "ì¥ë‚œ ê·¸ë§Œì¹˜ê³ ...");
     	}
     }
     
-    // SendMessage °øÅë Æû
-    public SendMessage messageForm(Message message, EarthQuakeVO earthQuakeVO, String text){
+    // SendMessage form
+    public SendMessage messageForm(EarthQuakeVO earthQuakeVO, String text){
     	SendMessage sendMessage = new SendMessage();
-    	sendMessage.setChatId(message.getChatId().toString());
     	Geocoding geocoding = null;
 		try {
 			geocoding = new Geocoding(earthQuakeVO.getLatitude(), earthQuakeVO.getLongitude());
 		} catch (Exception e) {
 			e.printStackTrace();
+			log.error("GEOCODING ERROR : ChannelHandlers.messageForm");
 		}
     	if(text.isEmpty()){
     		String mapLink = EarthQuakeEnum.GOOGLE_MAP.getDesc()+geocoding.getAddress().replace(" ", "+");
-    		Date from = new Date();
     		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     		String earthQuakeTime = transFormat.format(earthQuakeVO.getEarthQuakeTime());
     		String earthQuakInfoText =
-    				"=========================================\n"
-    				+"ÁöÁø ¹ß»ı½Ã°£ = "+earthQuakeTime+"\n"
-    				+"ÁöÁø ±Ô¸ğ       = "+earthQuakeVO.getEarthQuakeSacle()+"\n"
-    				+"ÁöÁø À§µµ       = "+earthQuakeVO.getLatitude()+"\n"
-    				+"ÁöÁø °æµµ       = "+earthQuakeVO.getLongitude()+"\n"
-    				+"ÁöÁø ¹ß»ıÁö¿ª   = "+geocoding.getAddress()+"\n"
-    				+"========================================\n"
-    				+"±¸±Û Áöµµ¸µÅ©\n"
+    				"===========================\n"
+    				+"ì§€ì§„ ë°œìƒì‹œê°„ = "+earthQuakeTime+"\n"
+    				+"ì§€ì§„ ê·œëª¨       = "+earthQuakeVO.getEarthQuakeSacle()+"\n"
+    				+"ì§€ì§„ ìœ„ë„       = "+earthQuakeVO.getLatitude()+"\n"
+    				+"ì§€ì§„ ê²½ë„       = "+earthQuakeVO.getLongitude()+"\n"
+    				+"ì§€ì§„ ë°œìƒì§€ì—­   = "+geocoding.getAddress()+"\n"
+    				+"===========================\n"
+    				+"êµ¬ê¸€ ì§€ë„ë§í¬\n"
     				+mapLink+"\n"
-    				+"========================================\n"
-    				+"±Ô¸ğ¿¡ µû¸¥ ÇÇÇØ»çÇ×\n"
+    				+"===========================\n"
+    				+"ê·œëª¨ì— ë”°ë¥¸ í”¼í•´ì‚¬í•­\n"
     				+earthQuakeStep(earthQuakeVO.getEarthQuakeSacle());
 
     		sendMessage.setText(earthQuakInfoText);
     	}else{
-    		String infoText ="'/¾Ë·ÁÁà' ¶ó ÀÔ·ÂÇÏ½Ã¸é ÃÖ±Ù¿¡ ÀÏ¾î³­ ÁöÁøÁ¤º¸¸¦ ¾Ë ¼ö ÀÖ½À´Ï´Ù.";
+    		String infoText ="'/ì•Œë ¤ì¤˜' ë¼ ì…ë ¥í•˜ì‹œë©´ ìµœê·¼ì— ì¼ì–´ë‚œ ì§€ì§„ì •ë³´ë¥¼ ì•Œ ìˆ˜ ìˆìŠµë‹ˆë‹¤.";
     		sendMessage.setText(text+"\n"+infoText);
     	}
     	return sendMessage;
     }
+
     
-    // ±Ô¸ğ¿¡ µû¸¥ ÇÇÇØ»çÇ× ÅØ½ºÆ®
+    
+    // ê·œëª¨ì— ë”°ë¥¸ í”¼í•´ì‚¬í•­ í…ìŠ¤íŠ¸
     public String earthQuakeStep(double scale){
     	String stepSituation ="";
     	if(scale<3){
@@ -167,15 +175,16 @@ public class ChannelHandlers extends TelegramLongPollingBot {
     	return stepSituation;
     }
     
-    // º¿°ú Àå³­Ä¡´Â ¸Ş½ÃÁö
+    // ë´‡ê³¼ ì¥ë‚œì¹˜ëŠ” ë©”ì‹œì§€
     public void funnyConversation(Message message, String text){
     	SendMessage sendMessage = new SendMessage();
     	sendMessage.setChatId(message.getChatId().toString());
-		String infoText ="'/¾Ë·ÁÁà' ¶ó ÀÔ·ÂÇÏ½Ã¸é ÃÖ±Ù¿¡ ÀÏ¾î³­ ÁöÁøÁ¤º¸¸¦ ¾Ë ¼ö ÀÖ½À´Ï´Ù.";
+    	String infoText ="'/ì•Œë ¤ì¤˜' ë¼ ì…ë ¥í•˜ì‹œë©´ ìµœê·¼ì— ì¼ì–´ë‚œ ì§€ì§„ì •ë³´ë¥¼ ì•Œ ìˆ˜ ìˆìŠµë‹ˆë‹¤.";
 		sendMessage.setText(text+"\n"+infoText);
 		try {
 			sendMessage(sendMessage);
 		} catch (TelegramApiException e) {
+			log.error("MESSAGE SEND ERROR : ChannelHandlers.funnyConversation");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

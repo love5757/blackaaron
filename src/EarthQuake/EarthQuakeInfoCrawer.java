@@ -14,6 +14,8 @@ import java.util.Date;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import EarthQuake.VO.EarthQuakeEnum;
 import EarthQuake.VO.EarthQuakeVO;
@@ -23,6 +25,7 @@ import EarthQuake.VO.EarthQuakeVO;
  */
 public class EarthQuakeInfoCrawer {
 
+	static final Logger log = LoggerFactory.getLogger("EARTH_QUAKE_LOGGER");
 	private static EarthQuakeVO earthQuakeVO = new EarthQuakeVO();
 
 	public static EarthQuakeVO getInfoEarthQuake() throws IOException{
@@ -30,11 +33,10 @@ public class EarthQuakeInfoCrawer {
 		Elements lastEarthQuakeInfo = doc.select(EarthQuakeEnum.LASTEARTHQUAKE_ELEMENTS.getDesc());
 		Elements lastCount = doc.select(EarthQuakeEnum.LASTCOUNT_ELEMENTS.getDesc());
 
-		// °¡Àå ÃÖ±Ù ¹øÈ£ ÀúÀå
+		// ê°€ì¥ ìµœê·¼ ë²ˆí˜¸ ì €ì¥
 		earthQuakeVO.setLastCount( Integer.parseInt(lastCount.text()));
 		
 		String str = lastEarthQuakeInfo.first().text();
-		System.out.println(str);
 		String[] values = str.split(" ");
 		
 		Date to = null;
@@ -43,28 +45,19 @@ public class EarthQuakeInfoCrawer {
 			SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			to = transFormat.parse(from);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			log.error("CRAWLING DATA FORMATE ERROR");
 		}
 		
-		// ÃÖ±Ù¿¡ ÀÏ¾î³­ ÁöÁøÁ¤º¸ earthQuakeVO °´Ã¼¿¡ ³Ö±â
+		// ìµœê·¼ì— ì¼ì–´ë‚œ ì§€ì§„ì •ë³´ earthQuakeVO ê°ì²´ì— ë„£ê¸°
 		earthQuakeVO.setNum(Integer.parseInt(values[0]));
 		earthQuakeVO.setEarthQuakeTime(to);
 		earthQuakeVO.setEarthQuakeSacle(Double.parseDouble(values[3]));
 		earthQuakeVO.setLatitude(Double.parseDouble(values[4]));
 		earthQuakeVO.setLongitude(Double.parseDouble(values[5]));
 		earthQuakeVO.setEarthQuakeArea(values[6]+" "+values[7]+" "+values[8]);
-		// ÀüÃ¼ Á¤º¸ ÇÑÁÙ·Î ÀúÀå
+		// ì „ì²´ ì •ë³´ í•œì¤„ë¡œ ì €ì¥
 		earthQuakeVO.setEarthQuakeFullInfo(str);
 		return earthQuakeVO;
 	}
 }
-
-
-
-//for(int i=0; i<values.length; i++){
-//System.out.println(values[i]);
-//}
-//for(Element e: lastEarthQuakeInfo){
-//	System.out.println(e.text());
-//}

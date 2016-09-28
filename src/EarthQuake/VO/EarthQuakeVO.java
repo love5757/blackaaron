@@ -9,21 +9,21 @@ package EarthQuake.VO;
 import java.util.Date;
 
 /**
- * @author 3574
+ * @author Minyoung Lee(blackaaron)
  *
  */
 public class EarthQuakeVO {
 	
-	private int num;							// ¹øÈ£(index)
-	private Date earthQuakeTime;				// ÁöÁø ¹ß»ı½Ã°£
-	private double earthQuakeSacle;				// ÁöÁø ±Ô¸ğ
-	private double latitude;					// À§µµ
-	private double longitude;					// °æµµ
-	private String earthQuakeArea;				// ÁöÁø ¹ß»ıÁö¿ª
-	private String earthQuakeFullInfo;			// ÃÖ±Ù ÁöÁø ÀüÃ¼ Á¤º¸
+	private int num;							// ë²ˆí˜¸(index)
+	private Date earthQuakeTime;				// ì§€ì§„ ë°œìƒì‹œê°„
+	private double earthQuakeSacle;				// ì§€ì§„ ê·œëª¨
+	private double latitude;					// ìœ„ë„
+	private double longitude;					// ê²½ë„
+	private String earthQuakeArea;				// ì§€ì§„ ë°œìƒì§€ì—­
+	private String earthQuakeFullInfo;			// ìµœê·¼ ì§€ì§„ ì „ì²´ ì •ë³´
 	
-	// ¸¶Áö¸· ÁöÁø index °ª
-	private int lastCount;					// °¡Àå ÃÖ±Ù¹øÈ£
+	// ë§ˆì§€ë§‰ ì§€ì§„ index ê°’
+	private int lastCount;					// ê°€ì¥ ìµœê·¼ë²ˆí˜¸
 
 	public int getNum() {
 		return num;
