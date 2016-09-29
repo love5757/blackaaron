@@ -30,7 +30,6 @@ public class ScheduleBotJob implements Job{
 
 	//로그선언
 	static final Logger log = LoggerFactory.getLogger(ScheduleBotJob.class);
-	
 	EarthQuakeVO earthQuakeVO = new EarthQuakeVO();
 	EarthQuakeInfoCrawer earthQuakeController = new EarthQuakeInfoCrawer();
 	String jobSays;
@@ -44,6 +43,7 @@ public class ScheduleBotJob implements Job{
 	}
 	//스케줄러에 인해 주기적으로 실행되는 함수.
 	public void execute(JobExecutionContext context)throws JobExecutionException{
+		log.debug("*************스케쥴러 excute 실행*************");
 		JobKey key = context.getJobDetail().getKey();
 		
 		state.add(new Date());
@@ -53,11 +53,11 @@ public class ScheduleBotJob implements Job{
 		ChannelHandlers channelHandlers = new ChannelHandlers();
 			try {
 				earthQuakeVO = earthQuakeController.getInfoEarthQuake();
-				log.debug(earthQuakeVO.toString());
+				log.debug("***********홈페이지 지진정보"+earthQuakeVO.toString()+"***********");
 				
 				if(currentEarthQuakep.getLastCount() == 0){
 					currentEarthQuakep = earthQuakeVO;
-					log.debug("최근 지진정보"+currentEarthQuakep.toString());
+					log.debug("***********최근 지진정보"+currentEarthQuakep.toString()+"***********");
 				}
 				
 				if(currentEarthQuakep.getLastCount() < earthQuakeVO.getLastCount()){
@@ -69,7 +69,8 @@ public class ScheduleBotJob implements Job{
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				log.error("information Connection Error");
+				log.error("***********information Connection Error***********");
+				log.error("***********홈페이지 지진정보"+earthQuakeVO.toString()+"***********");
 			}
 		
 	}
