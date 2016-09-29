@@ -4,11 +4,8 @@ package EarthQuake.Telegram;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
@@ -17,9 +14,11 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.logging.BotLogger;
 
 import EarthQuake.EarthQuakeInfoCrawer;
+import EarthQuake.GPS.Geocoding;
 import EarthQuake.VO.EarthQuakeEnum;
 import EarthQuake.VO.EarthQuakeVO;
-import EarthQuake.GPS.Geocoding;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -32,7 +31,7 @@ import EarthQuake.GPS.Geocoding;
 public class ChannelHandlers extends TelegramLongPollingBot {
     private static final String LOGTAG = "CHANNELHANDLERS";
     //로그선언
-  	static final Logger log = LoggerFactory.getLogger("EARTH_QUAKE_LOGGER");
+  	static final Logger logger = LoggerFactory.getLogger(ChannelHandlers.class);
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -47,11 +46,11 @@ public class ChannelHandlers extends TelegramLongPollingBot {
 //                		handleIncomingMessage(message);                		
 //                	}
                 } catch (InvalidObjectException e) {
-                    BotLogger.severe(LOGTAG, e);
+                	//logger.error(LOGTAG, e);
                 }
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+        	//logger.error(LOGTAG, e);
         }
     }
 
@@ -67,21 +66,24 @@ public class ChannelHandlers extends TelegramLongPollingBot {
     }
     // 스케쥴러 메시지 전달
     public void schedulerMessageSend(EarthQuakeVO earthQuakeVO, String channelID){
+    	logger.debug("*******************스케줄러 답변******************");
     	SendMessage sendMessage = new SendMessage();
-    	
     	sendMessage = messageForm(earthQuakeVO, "");
     	// @jijin2 지진이 말한다 채널로 고정
     	sendMessage.setChatId(channelID);
     	try {
             sendMessage(sendMessage);
         } catch (TelegramApiException e) {
-        	log.error("MESSAGE SEND ERROR : ChannelHandlers.schedulerMessageSend");
+        	logger.error("***********MESSAGE SEND ERROR : ChannelHandlers.schedulerMessageSend***********");
+        	logger.error("***********MESSAGE SEND ERROR :"+earthQuakeVO.toString()+"***********");
         }
     }
     
 
     // 질문에 답변하기
     private void handleIncomingMessage(Message message) throws InvalidObjectException {
+    	logger.debug("*******************봇 질문 답변******************");
+    	logger.debug("*******************질문한 사람 = "+message.getChat().getLastName()+message.getChat().getFirstName()+"*******************");
     	String messageText = message.getText();
         if(messageText.startsWith("/")){
         	messageText = messageText.substring(1, messageText.length());
@@ -107,11 +109,11 @@ public class ChannelHandlers extends TelegramLongPollingBot {
     		} catch (IOException e) {
     			// TODO Auto-generated catch block
     			e.printStackTrace();
-    			log.error("REPLY ERROR : ChannelHandlers.handelIncomingMessage");
+    			logger.error("***********REPLY ERROR : ChannelHandlers.handelIncomingMessage***********");
     		} catch (TelegramApiException e) {
     			// TODO Auto-generated catch block
     			e.printStackTrace();
-    			log.error("REPLY ERROR : ChannelHandlers.handelIncomingMessage");
+    			logger.error("***********REPLY ERROR : ChannelHandlers.handelIncomingMessage***********");
     		}
     	}else{
     		funnyConversation(message, "장난 그만치고...");
@@ -126,7 +128,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
 			geocoding = new Geocoding(earthQuakeVO.getLatitude(), earthQuakeVO.getLongitude());
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error("GEOCODING ERROR : ChannelHandlers.messageForm");
+			//logger.error("GEOCODING ERROR : ChannelHandlers.messageForm");
 		}
     	if(text.isEmpty()){
     		String mapLink = EarthQuakeEnum.GOOGLE_MAP.getDesc()+geocoding.getAddress().replace(" ", "+");
@@ -184,7 +186,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
 		try {
 			sendMessage(sendMessage);
 		} catch (TelegramApiException e) {
-			log.error("MESSAGE SEND ERROR : ChannelHandlers.funnyConversation");
+			logger.error("***********MESSAGE SEND ERROR : ChannelHandlers.funnyConversation***********");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -23,11 +23,6 @@ public class EarthQuakeTelegramMain {
     public static void main(String[] args) {
         BotLogger.setLevel(Level.ALL);
         BotLogger.registerLogger(new ConsoleHandler());
-        try {
-            BotLogger.registerLogger(new BotsFileHandler());
-        } catch (IOException e) {
-            BotLogger.severe(LOGTAG, e);
-        }
 
         try {
             TelegramBotsApi telegramBotsApi = createTelegramBotsApi();
