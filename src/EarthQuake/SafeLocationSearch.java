@@ -153,6 +153,7 @@ public class SafeLocationSearch {
 		addrCd[2]=areaCodeOne;
 		
 		List<SafeLocationVO> safeLocList = searchSafeLocaion(0, addrCd);
+		//pushpush baby
 	}
 
 	/**
