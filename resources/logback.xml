@@ -54,16 +54,19 @@
 	</appender>
 
 	<!-- Send logs to both console and file audit -->
-	<logger name="com.mkyong.web" level="debug"
+	<logger name="com.mkyong.web" level="info"
 		additivity="false">
 		<appender-ref ref="FILE-AUDIT" />
 		<appender-ref ref="STDOUT" />
 	</logger>
+	
+	<logger name="com.mkyong.web" level="error" additivity="false">
+		<appender-ref ref="FILE-ERROR" />
+	</logger>
+	
 
   <root level="debug">
     <appender-ref ref="STDOUT" />
-	<appender-ref ref="FILE-AUDIT" />
-	<appender-ref ref="FILE-ERROR" />
   </root>
 
 </configuration>

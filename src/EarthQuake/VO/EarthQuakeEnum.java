@@ -27,8 +27,15 @@ public enum EarthQuakeEnum {
 	//7 세기 이상
 	LEVEL_6 ("LEVEL_6","교량이 부서지고 땅에 넓은 균열이 발생되며, 지하 파이프가 완전히 파괴됨. 연약한 땅이 푹 꺼지고 지층이 어긋나며, 기차선로가 심하게 휘어짐.\n지표면에 파동이 보이고 시야와 수평면이 뒤틀리고 물체가 하늘로 던져짐."),
 	
-	LASTCOUNT_ELEMENTS ("LASTCOUNT_ELEMENTS","div.totalCount b");
+	LASTCOUNT_ELEMENTS ("LASTCOUNT_ELEMENTS","div.totalCount b"),
  
+	// 대피소 관련 //
+	SAFE_URL ("SAFEURL","http://www.safekorea.go.kr/idsiSFK/sfk/cs/cvi/egf/selectMsfrtnTrlSport.do"),
+	SAFE_SELLECTBOX_URL ("SAFE_SELLECTBOX_URL","http://www.safekorea.go.kr/idsiSFK/sfk/ca/cac/are2/area2List.do"),
+	SAFE_ACCEPT ("SAFE_ACCEPT","application/json"),
+	SAFE_CONTENT_TYPE ("SAFE_CONTENT_TYPE","application/json; charset='UTF-8'"),
+	SAFE_ACCEPT_ENCODING ("SAFE_ACCEPT_ENCODING","gzip, deflate");
+	
     private String code;
     private String desc;
  
