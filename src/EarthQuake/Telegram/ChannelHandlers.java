@@ -4,16 +4,18 @@ package EarthQuake.Telegram;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.text.SimpleDateFormat;
-
+import java.util.List;
 
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Location;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.logging.BotLogger;
 
 import EarthQuake.EarthQuakeInfoCrawer;
+import EarthQuake.SafeLocationSearch;
 import EarthQuake.GPS.Geocoding;
 import EarthQuake.VO.EarthQuakeEnum;
 import EarthQuake.VO.EarthQuakeVO;
@@ -37,7 +39,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         try {
             Message message = update.getMessage();
-            if (message != null && message.hasText()) {
+            if (message != null) {
                 try {
                 	handleIncomingMessage(message);
 //                	if(RECRUIT_INFO.equals(message)){
@@ -46,11 +48,11 @@ public class ChannelHandlers extends TelegramLongPollingBot {
 //                		handleIncomingMessage(message);                		
 //                	}
                 } catch (InvalidObjectException e) {
-                	//logger.error(LOGTAG, e);
+                	logger.error(LOGTAG, e);
                 }
             }
         } catch (Exception e) {
-        	//logger.error(LOGTAG, e);
+        	logger.error(LOGTAG, e);
         }
     }
 
@@ -66,7 +68,6 @@ public class ChannelHandlers extends TelegramLongPollingBot {
     }
     // 스케쥴러 메시지 전달
     public void schedulerMessageSend(EarthQuakeVO earthQuakeVO, String channelID){
-    	logger.debug("*******************스케줄러 답변******************");
     	SendMessage sendMessage = new SendMessage();
     	sendMessage = messageForm(earthQuakeVO, "");
     	// @jijin2 지진이 말한다 채널로 고정
@@ -85,38 +86,63 @@ public class ChannelHandlers extends TelegramLongPollingBot {
     	logger.debug("*******************봇 질문 답변******************");
     	logger.debug("*******************질문한 사람 = "+message.getChat().getLastName()+message.getChat().getFirstName()+"*******************");
     	String messageText = message.getText();
-        if(messageText.startsWith("/")){
-        	messageText = messageText.substring(1, messageText.length());
-        }
-        if(messageText.equals("닥쳐") || messageText.equals("아놔") || messageText.equals("죽는다") || messageText.equals("")  ){
-    		funnyConversation(message, "똑바로 말해! 시비걸지 말고.. 바쁘다");
-    	}else if(messageText.equals("뭐") || messageText.equals(" ")){
-    		funnyConversation(message, "뭐! 이눔이!");
-    	}else if(messageText.equals("야") || messageText.equals("모야")){
-    		funnyConversation(message, "내가 니 봇인줄 아냐? ㅋㅋ ");
-    	}else if(messageText.equals("싫은데") || messageText.equals("싫어")){
-    		funnyConversation(message, "나가!");
-    	}else if(messageText.equals("그만") || messageText.equals("stop")){
-    		funnyConversation(message, "임의 사용자가 stop 시킬 수 없습니다.");
-    	}else if(messageText.equals("알려줘") || messageText.equals("start")){
-    		EarthQuakeVO earthQuakeVO = new EarthQuakeVO();
-    		EarthQuakeInfoCrawer earthQuakeInfoCrawer = new EarthQuakeInfoCrawer();
+    	Location location = message.getLocation();
+    	
+    	// message getLocation 과 getText 값 여부에 따른 조건문
+    	if(message.getLocation()!=null){
+    		// 대피장소 알려주기 위한 메소드 연결
+    		String userLocation ="";
+    		double latitude = 0;
+    		double longitude = 0;
+    		SafeLocationSearch safeLocationSearch = new SafeLocationSearch();
+    		latitude = location.getLatitude();
+    		longitude = location.getLongitude();
+    		Geocoding geocoding = null;
     		try {
-    			earthQuakeVO = earthQuakeInfoCrawer.getInfoEarthQuake();
-    			SendMessage sendMessage = messageForm(earthQuakeVO, "");
-    			sendMessage.setChatId(message.getChatId().toString());
-    			sendMessage(sendMessage);
-    		} catch (IOException e) {
-    			// TODO Auto-generated catch block
+    			geocoding = new Geocoding(latitude, longitude);
+    			userLocation = geocoding.getAddress();
+    		} catch (Exception e) {
     			e.printStackTrace();
-    			logger.error("***********REPLY ERROR : ChannelHandlers.handelIncomingMessage***********");
-    		} catch (TelegramApiException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    			logger.error("***********REPLY ERROR : ChannelHandlers.handelIncomingMessage***********");
+    			//logger.error("GEOCODING ERROR : ChannelHandlers.messageForm");
     		}
+    		safeLocationSearch.locationMessageMatch(userLocation);
+    		
+    		
+    		
     	}else{
-    		funnyConversation(message, "장난 그만치고...");
+    		if(messageText.startsWith("/")){
+    			messageText = messageText.substring(1, messageText.length());
+    		}
+            if(messageText.equals("닥쳐") || messageText.equals("아놔") || messageText.equals("죽는다") || messageText.equals("")  ){
+        		funnyConversation(message, "똑바로 말해! 시비걸지 말고.. 바쁘다");
+        	}else if(messageText.equals("뭐") || messageText.equals(" ")){
+        		funnyConversation(message, "뭐! 이눔이!");
+        	}else if(messageText.equals("야") || messageText.equals("모야")){
+        		funnyConversation(message, "내가 니 봇인줄 아냐? ㅋㅋ ");
+        	}else if(messageText.equals("싫은데") || messageText.equals("싫어")){
+        		funnyConversation(message, "나가!");
+        	}else if(messageText.equals("그만") || messageText.equals("stop")){
+        		funnyConversation(message, "임의 사용자가 stop 시킬 수 없습니다.");
+        	}else if(messageText.equals("알려줘") || messageText.equals("start")){
+        		EarthQuakeVO earthQuakeVO = new EarthQuakeVO();
+        		EarthQuakeInfoCrawer earthQuakeInfoCrawer = new EarthQuakeInfoCrawer();
+        		try {
+        			earthQuakeVO = earthQuakeInfoCrawer.getInfoEarthQuake();
+        			SendMessage sendMessage = messageForm(earthQuakeVO, "");
+        			sendMessage.setChatId(message.getChatId().toString());
+        			sendMessage(sendMessage);
+        		} catch (IOException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        			logger.error("***********REPLY ERROR : ChannelHandlers.handelIncomingMessage***********");
+        		} catch (TelegramApiException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        			logger.error("***********REPLY ERROR : ChannelHandlers.handelIncomingMessage***********");
+        		}
+        	}else{
+        		funnyConversation(message, "장난 그만치고...");
+        	}
     	}
     }
     

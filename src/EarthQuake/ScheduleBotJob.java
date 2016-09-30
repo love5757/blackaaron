@@ -43,7 +43,6 @@ public class ScheduleBotJob implements Job{
 	}
 	//스케줄러에 인해 주기적으로 실행되는 함수.
 	public void execute(JobExecutionContext context)throws JobExecutionException{
-		log.debug("*************스케쥴러 excute 실행*************");
 		JobKey key = context.getJobDetail().getKey();
 		
 		state.add(new Date());

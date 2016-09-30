@@ -25,7 +25,7 @@ import EarthQuake.VO.EarthQuakeVO;
  */
 public class EarthQuakeInfoCrawer {
 
-	static final Logger log = LoggerFactory.getLogger("EARTH_QUAKE_LOGGER");
+	static final Logger log = LoggerFactory.getLogger(EarthQuakeInfoCrawer.class);
 	private static EarthQuakeVO earthQuakeVO = new EarthQuakeVO();
 
 	public static EarthQuakeVO getInfoEarthQuake() throws IOException{
