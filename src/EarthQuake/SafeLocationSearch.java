@@ -153,7 +153,6 @@ public class SafeLocationSearch {
 		addrCd[2]=areaCodeOne;
 		
 		List<SafeLocationVO> safeLocList = searchSafeLocaion(0, addrCd);
-		System.out.println("모가 나오나?"+safeLocList.toString());
 	}
 
 	/**
