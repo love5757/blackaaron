@@ -36,7 +36,7 @@ public class SafeLocationSearch {
 	static int areaCodeOne =0;
 	static int areaCodeTwo =0;
 	static int areaCodeThree =0;
-	
+
 
 	// URLConnection 공통 폼
 	public HttpURLConnection connectionForm(String url, int upperCode, int[] addrCd){
@@ -48,7 +48,7 @@ public class SafeLocationSearch {
 			con.setRequestProperty("Accept", EarthQuakeEnum.SAFE_ACCEPT.getDesc());
 			con.setRequestProperty("Content-type", EarthQuakeEnum.SAFE_CONTENT_TYPE.getDesc());
 			con.setRequestProperty("Accept-Encoding", EarthQuakeEnum.SAFE_ACCEPT_ENCODING.getDesc());
-			
+
 			JSONObject selectList = new JSONObject();
 			JSONObject params = new JSONObject();
     		// Url 별 파라미터 세팅
@@ -77,7 +77,7 @@ public class SafeLocationSearch {
 		}
 		return con;
 	}
-	
+
 	// 최종 가까운 위치의 대피소 파악하기
 	public List<SafeLocationVO> searchSafeLocaion(int upperCode, int[] addrCd){
 		List<SafeLocationVO> safeLocList = null ;
@@ -107,7 +107,7 @@ public class SafeLocationSearch {
 		}
 		return safeLocList;
 	}
-	
+
 	// 1,2,3차 depth의 코드 값 구분의 selectbox
 	public List<SafeLocationSelectBoxVO> searchSelectBoxCode(int upperCode, int[] addrCd){
 		List<SafeLocationSelectBoxVO> selectBoxList = null ;
@@ -130,13 +130,13 @@ public class SafeLocationSearch {
     	        System.out.println(jObj2.toString());
     			in.close();
     			return new Gson().fromJson(jObj2.toString(), new TypeToken<List<SafeLocationSelectBoxVO>>(){}.getType());
-    		} 
+    		}
 		} catch (Exception e) {
 			log.error("*************searchSelectBoxCode Error*************");
 		}
 		return selectBoxList;
 	}
-	
+
 	public void locationMessageMatch(String userLocation){
 		int [] addrCd = null;
 		String[] fullAddr = userLocation.split(" ");
@@ -144,14 +144,14 @@ public class SafeLocationSearch {
 		String addr2 = fullAddr[1]+" "+fullAddr[2];
 		String addr3 = fullAddr[1]+" "+fullAddr[2]+" "+fullAddr[3];
 		int upperCode=0;
-		
+
 		areaCodeOne = getUpperCodeMtd(upperCode, addr1).getOrgCd();
 		addrCd[0]=areaCodeOne;
 		areaCodeTwo = getUpperCodeMtd(areaCodeOne, addr2).getOrgCd();
 		addrCd[1]=areaCodeOne;
 		areaCodeThree = getUpperCodeMtd(areaCodeTwo, addr3).getOrgCd();
 		addrCd[2]=areaCodeOne;
-		
+
 		List<SafeLocationVO> safeLocList = searchSafeLocaion(0, addrCd);
 		//pushpush baby
 	}
