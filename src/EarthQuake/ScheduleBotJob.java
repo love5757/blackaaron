@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import EarthQuake.Telegram.ChannelHandlers;
 import EarthQuake.VO.EarthQuakeVO;
+import jdk.nashorn.internal.ir.ThrowNode;
 
 
 /**
@@ -52,24 +53,23 @@ public class ScheduleBotJob implements Job{
 		ChannelHandlers channelHandlers = new ChannelHandlers();
 			try {
 				earthQuakeVO = earthQuakeController.getInfoEarthQuake();
-				log.debug("***********홈페이지 지진정보"+earthQuakeVO.toString()+"***********");
 				
 				if(currentEarthQuakep.getLastCount() == 0){
 					currentEarthQuakep = earthQuakeVO;
-					log.debug("***********최근 지진정보"+currentEarthQuakep.toString()+"***********");
 				}
 				
 				if(currentEarthQuakep.getLastCount() < earthQuakeVO.getLastCount()){
 					channelHandlers.schedulerMessageSend(earthQuakeVO,"@jijin2");
-					currentEarthQuakep.setLastCount(earthQuakeVO.getLastCount());
+					currentEarthQuakep = earthQuakeVO;
 				}
-				
+				log.error("넝ㅎ나");
+				throw new IOException("Exception 메세지 내용 입력");
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				log.error("***********information Connection Error***********");
-				log.error("***********홈페이지 지진정보"+earthQuakeVO.toString()+"***********");
+				log.error("***********currentEarthQuake information"+currentEarthQuakep.getLastCount()+"***********", e);
+				log.error("***********newEarthQuake information"+earthQuakeVO.getLastCount()+"***********",e);
 			}
 		
 	}
