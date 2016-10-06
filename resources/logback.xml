@@ -1,72 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<property name="DEV_HOME" value="logs" />
 
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<layout class="ch.qos.logback.classic.PatternLayout">
-			<Pattern>
-				%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
-			</Pattern>
-		</layout>
-	</appender>
+  <property name="LOG_LEVEL" value="DEBUG" />
+  <property name="LOG_DIR" value="/service/logs" />
 
-	<appender name="FILE-AUDIT"
-		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${DEV_HOME}/debug.log</file>
-		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-			<Pattern>
-				%d{yyyy-MM-dd HH:mm:ss} - %msg%n
-			</Pattern>
-		</encoder>
+  <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <param name="Target" value="System.out" />
+    <encoder>
+      <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread] %-5p: %c - %m%n
+      </pattern>
+    </encoder>
+  </appender>
 
-		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<!-- rollover daily -->
-			<fileNamePattern>${DEV_HOME}/archived/debug.%d{yyyy-MM-dd}.%i.log
-                        </fileNamePattern>
-			<timeBasedFileNamingAndTriggeringPolicy
-				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-				<maxFileSize>10MB</maxFileSize>
-			</timeBasedFileNamingAndTriggeringPolicy>
-		</rollingPolicy>
+  <appender name="dailyRolling"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <prudent>true</prudent>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_DIR}/toc_gateway-%d{yyyyMMdd}.log</fileNamePattern>
+      <maxHistory>720</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread] %-5p: %c - %m%n</pattern>
+    </encoder>
+  </appender>
 
-	</appender>
+  <appender name="accessDailyRolling"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>INFO</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+    <prudent>true</prudent>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_DIR}/access/toc_gateway_access-%d{yyyyMMdd}.log</fileNamePattern>
+      <maxHistory>720</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread] %-5p: %c - %m%n</pattern>
+    </encoder>
+  </appender>
 
-	<appender name="FILE-ERROR"
-		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${DEV_HOME}/error.log</file>
-		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-			<Pattern>
-				%d{yyyy-MM-dd HH:mm:ss} - %msg%n
-			</Pattern>
-		</encoder>
+  <appender name="errorDailyRolling"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>ERROR</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+    <prudent>true</prudent>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_DIR}/error/toc_gateway_error-%d{yyyyMMdd}.log</fileNamePattern>
+      <maxHistory>720</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread] %-5p: %c - %m%n</pattern>
+    </encoder>
+  </appender>
 
-		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<!-- rollover daily -->
-			<fileNamePattern>${DEV_HOME}/archived/error.%d{yyyy-MM-dd}.%i.log
-                        </fileNamePattern>
-			<timeBasedFileNamingAndTriggeringPolicy
-				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-				<maxFileSize>10MB</maxFileSize>
-			</timeBasedFileNamingAndTriggeringPolicy>
-		</rollingPolicy>
+  <appender name="messageLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <prudent>true</prudent>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_DIR}/message/toc_gateway_message-%d{yyyyMMdd}.log</fileNamePattern>
+      <maxHistory>720</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread] %-5p: %c - %m%n</pattern>
+    </encoder>
+  </appender>
 
-	</appender>
+  <logger name="EarthQuake" level="${LOG_LEVEL}">
+    <appender-ref ref="dailyRolling" />
+    <appender-ref ref="accessDailyRolling" />
+    <appender-ref ref="errorDailyRolling" />
+  </logger>
 
-	<!-- Send logs to both console and file audit -->
-	<logger name="com.mkyong.web" level="info"
-		additivity="false">
-		<appender-ref ref="FILE-AUDIT" />
-		<appender-ref ref="STDOUT" />
-	</logger>
-	
-	<logger name="com.mkyong.web" level="error" additivity="false">
-		<appender-ref ref="FILE-ERROR" />
-	</logger>
-	
-
-  <root level="debug">
-    <appender-ref ref="STDOUT" />
+  <root level="DEBUG">
+    <appender-ref ref="console" />
   </root>
 
 </configuration>

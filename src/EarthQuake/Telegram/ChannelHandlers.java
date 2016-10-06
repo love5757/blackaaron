@@ -19,6 +19,8 @@ import EarthQuake.SafeLocationSearch;
 import EarthQuake.GPS.Geocoding;
 import EarthQuake.VO.EarthQuakeEnum;
 import EarthQuake.VO.EarthQuakeVO;
+import EarthQuake.VO.SafeLocationVO;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,21 +77,21 @@ public class ChannelHandlers extends TelegramLongPollingBot {
     	try {
             sendMessage(sendMessage);
         } catch (TelegramApiException e) {
-        	logger.error("***********MESSAGE SEND ERROR : ChannelHandlers.schedulerMessageSend***********");
-        	logger.error("***********MESSAGE SEND ERROR :"+earthQuakeVO.toString()+"***********");
+        	logger.error("***********MESSAGE SEND ERROR : ChannelHandlers.schedulerMessageSend***********", e);
+        	logger.error("***********MESSAGE SEND ERROR :"+earthQuakeVO.toString()+"***********",e);
         }
     }
     
 
     // 질문에 답변하기
     private void handleIncomingMessage(Message message) throws InvalidObjectException {
-    	logger.debug("*******************봇 질문 답변******************");
     	logger.debug("*******************질문한 사람 = "+message.getChat().getLastName()+message.getChat().getFirstName()+"*******************");
     	String messageText = message.getText();
     	Location location = message.getLocation();
     	
     	// message getLocation 과 getText 값 여부에 따른 조건문
     	if(message.getLocation()!=null){
+			EarthQuakeVO earthQuakeVO = new EarthQuakeVO();
     		// 대피장소 알려주기 위한 메소드 연결
     		String userLocation ="";
     		double latitude = 0;
@@ -105,9 +107,25 @@ public class ChannelHandlers extends TelegramLongPollingBot {
     			e.printStackTrace();
     			//logger.error("GEOCODING ERROR : ChannelHandlers.messageForm");
     		}
-    		safeLocationSearch.locationMessageMatch(userLocation);
-    		
-    		
+    		List<SafeLocationVO> safeLocList = safeLocationSearch.locationMessageMatch(userLocation);
+    		//FACIL_RD_ADDR String 한방에
+    		StringBuffer safeResponseLoc= new StringBuffer();
+    		String mapLink; 
+    		for(SafeLocationVO safeLocationVO : safeLocList){
+//    			safeResponseLoc.append(safeLocationVO.getFACIL_RD_ADDR()+"\n"+EarthQuakeEnum.GOOGLE_MAP.getDesc()+safeLocationVO.getFACIL_RD_ADDR().replace(" ", "+"));
+    			safeResponseLoc.append(EarthQuakeEnum.GOOGLE_MAP.getDesc()+safeLocationVO.getFACIL_RD_ADDR().replace(" ", "+")+"\n");
+    		}
+			try {
+				String strSafeFacilLoc = safeResponseLoc.toString();
+				SendMessage sendMessage = new SendMessage();
+				sendMessage.setChatId(message.getChatId().toString());
+				sendMessage.setText(strSafeFacilLoc);
+				sendMessage(sendMessage);
+			} catch (TelegramApiException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logger.error("***********Question Ask Method Error : ChannelHandlers.handleIncomingMessage***********", e);
+			}
     		
     	}else{
     		if(messageText.startsWith("/")){
@@ -134,11 +152,11 @@ public class ChannelHandlers extends TelegramLongPollingBot {
         		} catch (IOException e) {
         			// TODO Auto-generated catch block
         			e.printStackTrace();
-        			logger.error("***********REPLY ERROR : ChannelHandlers.handelIncomingMessage***********");
+        			logger.error("***********REPLY ERROR : ChannelHandlers.handelIncomingMessage***********",e);
         		} catch (TelegramApiException e) {
         			// TODO Auto-generated catch block
         			e.printStackTrace();
-        			logger.error("***********REPLY ERROR : ChannelHandlers.handelIncomingMessage***********");
+        			logger.error("***********REPLY ERROR : ChannelHandlers.handelIncomingMessage***********",e);
         		}
         	}else{
         		funnyConversation(message, "장난 그만치고...");
@@ -212,7 +230,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
 		try {
 			sendMessage(sendMessage);
 		} catch (TelegramApiException e) {
-			logger.error("***********MESSAGE SEND ERROR : ChannelHandlers.funnyConversation***********");
+			logger.error("***********MESSAGE SEND ERROR : ChannelHandlers.funnyConversation***********", e);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

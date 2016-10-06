@@ -39,7 +39,7 @@ public class SafeLocationSearch {
 	
 
 	// URLConnection 공통 폼
-	public HttpURLConnection connectionForm(String url, int upperCode, int[] addrCd){
+	public static HttpURLConnection connectionForm(String url, int upperCode, int[] addrCd){
 		HttpURLConnection con = null ;
 		try {
 			URL obj = new URL(url);
@@ -57,7 +57,7 @@ public class SafeLocationSearch {
 				params.put("searchGb", "pageSearch");
 				params.put("q_area_cd_1", addrCd[0]);
 				params.put("q_area_cd_2", addrCd[1]);
-				params.put("q_area_cd_3", addrCd[2]);
+				params.put("q_area_cd_3", "");
 				params.put("q_equp_type", "S");
 				params.put("gubunCode", "CO7NN00006");
 				selectList.put("selectList", params);
@@ -79,7 +79,7 @@ public class SafeLocationSearch {
 	}
 	
 	// 최종 가까운 위치의 대피소 파악하기
-	public List<SafeLocationVO> searchSafeLocaion(int upperCode, int[] addrCd){
+	public static List<SafeLocationVO> searchSafeLocaion(int upperCode, int[] addrCd){
 		List<SafeLocationVO> safeLocList = null ;
     	try {
     		HttpURLConnection con = connectionForm(EarthQuakeEnum.SAFE_URL.getDesc(), upperCode, addrCd);
@@ -109,7 +109,7 @@ public class SafeLocationSearch {
 	}
 	
 	// 1,2,3차 depth의 코드 값 구분의 selectbox
-	public List<SafeLocationSelectBoxVO> searchSelectBoxCode(int upperCode, int[] addrCd){
+	public static List<SafeLocationSelectBoxVO> searchSelectBoxCode(int upperCode, int[] addrCd){
 		List<SafeLocationSelectBoxVO> selectBoxList = null ;
     	try {
     		HttpURLConnection con = connectionForm(EarthQuakeEnum.SAFE_SELLECTBOX_URL.getDesc(), upperCode, addrCd);
@@ -127,9 +127,9 @@ public class SafeLocationSearch {
     	        JSONObject jObj = new JSONObject(responseString);
     	        JSONArray jObj2 = jObj.getJSONArray("List");
     	        // Google Gson() 사용
-    	        System.out.println(jObj2.toString());
-    			in.close();
-    			return new Gson().fromJson(jObj2.toString(), new TypeToken<List<SafeLocationSelectBoxVO>>(){}.getType());
+    	        selectBoxList = new Gson().fromJson(jObj2.toString(), new TypeToken<List<SafeLocationSelectBoxVO>>(){}.getType());
+    	        in.close();
+    			
     		} 
 		} catch (Exception e) {
 			log.error("*************searchSelectBoxCode Error*************");
@@ -137,23 +137,33 @@ public class SafeLocationSearch {
 		return selectBoxList;
 	}
 	
-	public void locationMessageMatch(String userLocation){
-		int [] addrCd = null;
+	public List<SafeLocationVO> locationMessageMatch(String userLocation){
+		int[] addrCd = {0,0,0};
 		String[] fullAddr = userLocation.split(" ");
 		String addr1 = fullAddr[1];
 		String addr2 = fullAddr[1]+" "+fullAddr[2];
 		String addr3 = fullAddr[1]+" "+fullAddr[2]+" "+fullAddr[3];
 		int upperCode=0;
-		
-		areaCodeOne = getUpperCodeMtd(upperCode, addr1).getOrgCd();
-		addrCd[0]=areaCodeOne;
-		areaCodeTwo = getUpperCodeMtd(areaCodeOne, addr2).getOrgCd();
-		addrCd[1]=areaCodeOne;
-		areaCodeThree = getUpperCodeMtd(areaCodeTwo, addr3).getOrgCd();
-		addrCd[2]=areaCodeOne;
-		
-		List<SafeLocationVO> safeLocList = searchSafeLocaion(0, addrCd);
+		List<SafeLocationVO> safeLocList = null;
+		try {
+			areaCodeOne = getUpperCodeMtd(upperCode, addr1).getOrgCd();
+			addrCd[0]=areaCodeOne;
+			areaCodeTwo = getUpperCodeMtd(areaCodeOne, addr2).getOrgCd();
+			addrCd[1]=areaCodeTwo;
+			// 문제점 발견
+			// 1. 서울 특별시 동작구 신길7동 인데 실제 데이터에는 신길제7동임.. 3번째 값이 맞지 않아서 null
+			// 2. 지도에서 위도 경도로 했을 때 두번 째 값인 "~~구"가 값이 없는 경우가 있음
+			// 예를 들어 서울특별시 대방동 대림아파트
+//		areaCodeThree = getUpperCodeMtd(areaCodeTwo, addr3).getOrgCd();
+//		addrCd[2]=areaCodeThree;
+//		System.out.println(addrCd[2]);
+			safeLocList = searchSafeLocaion(0, addrCd);
+			
+		} catch (Exception e) {
+			log.error("************"+userLocation+"**************");
+		}
 		//pushpush baby
+		return safeLocList;
 	}
 
 	/**
